@@ -13,8 +13,7 @@
 
 /***( Manifest constants )************************************************/
 
-#define     LOCAL       0     /* semaphores will not be shared
-                                 with other processes */
+#define     LOCAL       0     /* semaphores will not be shared with other processes */
 
 /***( User-defined types )************************************************/
 
