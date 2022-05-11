@@ -124,6 +124,8 @@ static void *pController (void *arg) {
         sendMessage(&(queue[PH_SENSOR_Q], OutMsgPh));
         sendMessage(&(queue[CO2_SENSOR_Q], OutMsgCO2));
     }
+
+    return (NULL);
 }
 
 // Thermometer thread
