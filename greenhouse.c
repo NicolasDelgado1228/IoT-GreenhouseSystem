@@ -25,6 +25,8 @@ static void *pTimer(void *arg);
 
 int main (void) {
 
+    printf("Inicializando los IDs de los hilos...\n");
+
     pthread_t console_tid;
     pthread_t controller_tid;
     pthread_t thermometer_tid;
@@ -33,8 +35,10 @@ int main (void) {
     pthread_t co2_sensor_tid;
     pthread_t timer_tid;
 
+    printf("Inicializando las colas...\n");
     initialiseQueues();
 
+    printf("Creando los hilos...\n");
     pthread_create(&console_tid, NULL, pConsole, NULL);
     pthread_create(&controller_tid, NULL, pController, NULL);
     pthread_create(&thermometer_tid, NULL, pThermometer, NULL);
@@ -43,6 +47,7 @@ int main (void) {
     pthread_create(&co2_sensor_tid, NULL, pCO2Sensor, NULL);
     pthread_create(&timer_tid, NULL, pTimer, NULL);
 
+    printf("Uniendo los hilos...\n");
     pthread_join(console_tid, NULL);
     pthread_join(controller_tid, NULL);
     pthread_join(thermometer_tid, NULL);
@@ -51,6 +56,7 @@ int main (void) {
     pthread_join(co2_sensor_tid, NULL);
     pthread_join(timer_tid, NULL);
 
+    printf("Destruyendo las colas...\n");
     destroyQueues();
 
     return 0;
@@ -83,7 +89,7 @@ static void *pConsole (void *arg) {
                         OutMsg.value = TIME;
                         sendMessage(&(queue[TIMER_Q]), OutMsg);
                         next_state = WaitingTimer;
-                        break:
+                        break;
                     default:
                         break;
                 }
