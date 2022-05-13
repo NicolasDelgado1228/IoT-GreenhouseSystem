@@ -1,6 +1,6 @@
 /*******************************************************************************
 *
-*  sensorsBlock.h -   Manifest Constants and Types for concurrent access to a
+*  consoleBlock.h -   Manifest Constants and Types for concurrent access to a
 *                   circular buffer modelling a message queue. Console block
 *                   declarations file.
 *
@@ -15,15 +15,30 @@ typedef enum {
 } TO_CUSTOMER;
 
 typedef enum {
-    sSendData
+    sSendData,
+    sTimeout
 } TO_CONSOLE;
 
 typedef enum {
     sGetData
 } TO_SENSORS;
 
+typedef enum {
+    sSetTimer,
+    sTimeExpired,
+    sResetTimer
+} TO_TIMER;
+
 // STATES
 
 typedef enum {
-    WaitingController
+    IdleConsole,
+    WaitingController,
+    WaitingTimer
 } CONSOLE_STATES;
+
+typedef enum {
+    IdleTimer,
+    CheckTimeout,
+    WastingTime
+} TIMER_STATES;

@@ -3,13 +3,13 @@
 *  phtrdsMsgLyr.h - Service routines for concurrent access to a circular buffer
 *                   modelling a message queue
 *
-*   Notes:          Users should modify the pMLusrConf.h file
+*   Notes:          Users should modify the greenhouse.h file
 *
 *******************************************************************************/
 
 #include    <pthread.h>
 #include    <semaphore.h>
-#include    "pMLusrConf.h"    /* User-defined constants and structs */
+#include    "greenhouse.h"    /* User-defined constants and structs */
 
 /***( Manifest constants )************************************************/
 
