@@ -65,7 +65,7 @@ static void *pConsole (void *arg) {
 
     for ( ; ; ) {
         state = next_state;
-        InMsg = receiveMessage(&(queue[CONSOLE_Q]))
+        InMsg = receiveMessage(&(queue[CONSOLE_Q]));
 
         switch (state) {
 
@@ -127,7 +127,7 @@ static void *pController (void *arg) {
                 switch (InMsg.signal) {
                     case sGetData:
                         OutMsg.signal = (int) sGetTemp;
-                        sendMessage(&(queue[THERMOMETER_Q], OutMsg));
+                        sendMessage(&(queue[THERMOMETER_Q]), OutMsg);
                         next_state = WaitingTemp;
                         break;
                     default:
@@ -140,7 +140,7 @@ static void *pController (void *arg) {
                     case sSendTemp:
                         sensorsArray[0] = InMsg.value;
                         OutMsg.signal = (int) sGetHumidity;
-                        sendMessage(&(queue[HUM_SENSOR_Q], OutMsg));
+                        sendMessage(&(queue[HUM_SENSOR_Q]), OutMsg);
                         next_state = WaitingHumidity;
                         break;
                     default:
@@ -153,7 +153,7 @@ static void *pController (void *arg) {
                     case sSendHumidity:
                         sensorsArray[1] = InMsg.value;
                         OutMsg.signal = (int) sGetPh;
-                        sendMessage(&(queue[PH_SENSOR_Q], OutMsg));
+                        sendMessage(&(queue[PH_SENSOR_Q]), OutMsg);
                         next_state = WaitingPh;
                         break;
                     default:
@@ -166,7 +166,7 @@ static void *pController (void *arg) {
                     case sSendPh:
                         sensorsArray[2] = InMsg.value;
                         OutMsg.signal = (int) sGetCO2;
-                        sendMessage(&(queue[CO2_SENSOR_Q], OutMsg));
+                        sendMessage(&(queue[CO2_SENSOR_Q]), OutMsg);
                         next_state = WaitingCO2;
                         break;
                     default:
@@ -183,7 +183,7 @@ static void *pController (void *arg) {
                         OutMsg.value2 = sensorsArray[1];
                         OutMsg.value3 = sensorsArray[2];
                         OutMsg.value4 = sensorsArray[3];
-                        sendMessage(&(queue[CONSOLE_Q], OutMsg));
+                        sendMessage(&(queue[CONSOLE_Q]), OutMsg);
                         next_state = IdleController;
                         break;
                     default:
@@ -218,7 +218,7 @@ static void *pThermometer (void *arg) {
                     case sGetTemp:
                         OutMsg.signal = (int) sSendTemp;
                         OutMsg.value = Temp;
-                        sendMessage(&(queue[CONTROLLER_Q], OutMsg));
+                        sendMessage(&(queue[CONTROLLER_Q]), OutMsg);
                         next_state = IdleTemp;
                         break;
                     default:
@@ -252,7 +252,7 @@ static void *pHumiditySensor (void *arg) {
                     case sGetHumidity:
                         OutMsg.signal = (int) sSendHumidity;
                         OutMsg.value = Hum;
-                        sendMessage(&(queue[CONTROLLER_Q], OutMsg));
+                        sendMessage(&(queue[CONTROLLER_Q]), OutMsg);
                         next_state = IdleHum;
                         break;
                     default:
@@ -286,7 +286,7 @@ static void *pPhSensor (void *arg) {
                     case sGetPh:
                         OutMsg.signal = (int) sSendPh;
                         OutMsg.value = pH;
-                        sendMessage(&(queue[CONTROLLER_Q], OutMsg));
+                        sendMessage(&(queue[CONTROLLER_Q]), OutMsg);
                         next_state = IdlePh;
                         break;
                     default:
@@ -320,7 +320,7 @@ static void *pCO2Sensor (void *arg) {
                     case sGetCO2:
                         OutMsg.signal = (int) sSendCO2;
                         OutMsg.value = CO2;
-                        sendMessage(&(queue[CONTROLLER_Q], OutMsg));
+                        sendMessage(&(queue[CONTROLLER_Q]), OutMsg);
                         next_state = IdleCO2;
                         break;
                     default:

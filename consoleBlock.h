@@ -20,10 +20,6 @@ typedef enum {
 } TO_CONSOLE;
 
 typedef enum {
-    sGetData
-} TO_SENSORS;
-
-typedef enum {
     sSetTimer,
     sTimeExpired,
     sResetTimer
