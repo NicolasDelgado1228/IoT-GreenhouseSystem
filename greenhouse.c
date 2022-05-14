@@ -260,7 +260,7 @@ static void *pThermometer (void *arg) {
 
         state = next_state;
         InMsg = receiveMessage(&(queue[THERMOMETER_Q]));
-        Temp = randomFloat(20, 30);
+        Temp = randomFloat(25, 27);
 
         switch (state) {
             case IdleTemp:
@@ -295,7 +295,7 @@ static void *pHumiditySensor (void *arg) {
 
         state = next_state;
         InMsg = receiveMessage(&(queue[HUM_SENSOR_Q]));
-        Hum = randomFloat(80, 90);
+        Hum = randomFloat(85, 87);
 
         switch (state) {
             case IdleHum:
@@ -330,7 +330,7 @@ static void *pPhSensor (void *arg) {
 
         state = next_state;
         InMsg = receiveMessage(&(queue[PH_SENSOR_Q]));
-        pH = randomFloat(6, 7);
+        pH = randomFloat(6.3, 6.7);
 
         switch (state) {
             case IdlePh:
@@ -365,7 +365,7 @@ static void *pCO2Sensor (void *arg) {
 
         state = next_state;
         InMsg = receiveMessage(&(queue[CO2_SENSOR_Q]));
-        CO2 = randomFloat(1000, 1500);
+        CO2 = randomFloat(1150, 1250);
 
         switch (state) {
             case IdleCO2:
