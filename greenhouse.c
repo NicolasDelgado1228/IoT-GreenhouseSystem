@@ -8,11 +8,17 @@
 *******************************************************************************/
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
 #include <errno.h>
 #include <time.h>
 #include "phtrdsMsgLyr.h"
+
+// Function to generate a random number in a defined range
+float randomFloat (float min, float max){
+    return (((double)rand()) / ((double)RAND_MAX)) * (max - min) + min;
+}
 
 // Function prototypes
 static void *pConsole(void *arg);
@@ -55,7 +61,7 @@ int main (void) {
     pthread_join(co2_sensor_tid, NULL);
     pthread_join(timer_tid, NULL);
 
-    /* Destroy queues */
+    // Destroy queues
     destroyQueues();
 
     return 0;
@@ -84,7 +90,7 @@ static void *pConsole (void *arg) {
 
         switch (state) {
             case IdleConsole:
-                // Send signal to obtain data for the first time
+                // Send signal to obtain data
                 OutMsg.signal = (int) sGetData;
                 sendMessage(&(queue[CONTROLLER_Q]), OutMsg);
                 next_state = WaitingController;
@@ -105,15 +111,15 @@ static void *pConsole (void *arg) {
                         // Gets the current date and time
                         time_t t = time(NULL);
                         struct tm localTime = *localtime(&t);
-                        char dateHour[70];
+                        char dateTime[70];
                         char *format = "%Y-%m-%d %H:%M:%S";
-                        strftime(dateHour, sizeof dateHour, format, &localTime);
+                        strftime(dateTime, sizeof dateTime, format, &localTime);
 
                         // Displays data to the user
-                        printf("ESCANEO DE VARIABLES (%s)\n", dateHour);
+                        printf("ESCANEO DE VARIABLES (%s)\n", dateTime);
                         printf("- Temperatura: %.1f °C\n- Humedad: %.1f %%\n- pH: %.1f\n- CO2: %.1f ppm\n\n", Temp, Hum, pH, CO2);
 
-                        // Sends a signal to the controller to count the waiting time
+                        // Sends a signal to the timer to count the waiting time
                         OutMsg.signal = (int) sSetTimer;
                         OutMsg.value = scanFrecuency;
                         sendMessage(&(queue[TIMER_Q]), OutMsg);
@@ -125,7 +131,7 @@ static void *pConsole (void *arg) {
                 break;
 
             case WaitingTimer:
-                // Receives signal from timer and can continue scanning
+                // Receives signal from the timer and can continue scanning
                 InMsg = receiveMessage(&(queue[CONSOLE_Q]));
                 switch (InMsg.signal){
                     case sTimeout:
@@ -246,14 +252,15 @@ static void *pController (void *arg) {
 static void *pThermometer (void *arg) {
     THERMOMETER_STATES state, next_state;
     msg_t InMsg, OutMsg;
+    float Temp;
 
     next_state = IdleTemp;
-    float Temp = 23;
 
     for ( ; ; ) {
 
         state = next_state;
         InMsg = receiveMessage(&(queue[THERMOMETER_Q]));
+        Temp = randomFloat(20, 30);
 
         switch (state) {
             case IdleTemp:
@@ -280,14 +287,15 @@ static void *pThermometer (void *arg) {
 static void *pHumiditySensor (void *arg) {
     HUMIDITY_STATES state, next_state;
     msg_t InMsg, OutMsg;
+    float Hum;
 
     next_state = IdleHum;
-    float Hum = 84;
 
     for ( ; ; ) {
 
         state = next_state;
         InMsg = receiveMessage(&(queue[HUM_SENSOR_Q]));
+        Hum = randomFloat(80, 90);
 
         switch (state) {
             case IdleHum:
@@ -314,14 +322,15 @@ static void *pHumiditySensor (void *arg) {
 static void *pPhSensor (void *arg) {
     PH_STATES state, next_state;
     msg_t InMsg, OutMsg;
+    float pH;
 
     next_state = IdlePh;
-    float pH = 6.5;
 
     for ( ; ; ) {
 
         state = next_state;
         InMsg = receiveMessage(&(queue[PH_SENSOR_Q]));
+        pH = randomFloat(6, 7);
 
         switch (state) {
             case IdlePh:
@@ -348,14 +357,15 @@ static void *pPhSensor (void *arg) {
 static void *pCO2Sensor (void *arg) {
     CO2_STATES state, next_state;
     msg_t InMsg, OutMsg;
+    float CO2;
 
     next_state = IdleCO2;
-    float CO2 = 1200;
 
     for ( ; ; ) {
 
         state = next_state;
         InMsg = receiveMessage(&(queue[CO2_SENSOR_Q]));
+        CO2 = randomFloat(1000, 1500);
 
         switch (state) {
             case IdleCO2:
