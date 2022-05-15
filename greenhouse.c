@@ -92,6 +92,7 @@ static void *pConsole (void *arg) {
             case IdleConsole:
                 // Send signal to obtain data
                 OutMsg.signal = (int) sGetData;
+                printf("Enviando mensaje sGetData desde pConsole a pController...\n");
                 sendMessage(&(queue[CONTROLLER_Q]), OutMsg);
                 next_state = WaitingController;
                 break;
@@ -117,11 +118,13 @@ static void *pConsole (void *arg) {
 
                         // Displays data to the user
                         printf("ESCANEO DE VARIABLES (%s)\n", dateTime);
-                        printf("- Temperatura: %.1f °C\n- Humedad: %.1f %%\n- pH: %.1f\n- CO2: %.1f ppm\n\n", Temp, Hum, pH, CO2);
+                        printf("- Temperatura: %.1f °C\n- Humedad: %.1f %%\n- pH: %.1f\n- CO2: %.1f ppm\n", Temp, Hum, pH, CO2);
+                        printf("-----------------------------------------\n");
 
                         // Sends a signal to the timer to count the waiting time
                         OutMsg.signal = (int) sSetTimer;
                         OutMsg.value = scanFrecuency;
+                        printf("Enviando mensaje sSetTimer desde pConsole a pTimer...\n");
                         sendMessage(&(queue[TIMER_Q]), OutMsg);
                         next_state = WaitingTimer;
                         break;
@@ -136,6 +139,7 @@ static void *pConsole (void *arg) {
                 switch (InMsg.signal){
                     case sTimeout:
                         OutMsg.signal = (int) sGetData;
+                        printf("Enviando mensaje sGetData desde pConsole a pController...\n");
                         sendMessage(&(queue[CONTROLLER_Q]), OutMsg);
                         next_state = WaitingController;
                         break;
@@ -144,9 +148,7 @@ static void *pConsole (void *arg) {
 
             default:
                 break;
-
         }
-
     }
 
     return NULL;
@@ -172,6 +174,7 @@ static void *pController (void *arg) {
                     case sGetData:
                         // Request temperature
                         OutMsg.signal = (int) sGetTemp;
+                        printf("Enviando mensaje sGetTemp desde pController a pThermometer...\n");
                         sendMessage(&(queue[THERMOMETER_Q]), OutMsg);
                         next_state = WaitingTemp;
                         break;
@@ -186,6 +189,7 @@ static void *pController (void *arg) {
                         // Receives temperature and requests humidity
                         sensorsArray[0] = InMsg.value;
                         OutMsg.signal = (int) sGetHumidity;
+                        printf("Enviando mensaje sGetHumidity desde pController a pHumiditySensor...\n");
                         sendMessage(&(queue[HUM_SENSOR_Q]), OutMsg);
                         next_state = WaitingHumidity;
                         break;
@@ -200,6 +204,7 @@ static void *pController (void *arg) {
                         // Receives humidity and requests pH
                         sensorsArray[1] = InMsg.value;
                         OutMsg.signal = (int) sGetPh;
+                        printf("Enviando mensaje sGetPh desde pController a pPhSensor...\n");
                         sendMessage(&(queue[PH_SENSOR_Q]), OutMsg);
                         next_state = WaitingPh;
                         break;
@@ -214,6 +219,7 @@ static void *pController (void *arg) {
                         // Receives pH and requests CO2
                         sensorsArray[2] = InMsg.value;
                         OutMsg.signal = (int) sGetCO2;
+                        printf("Enviando mensaje sGetCO2 desde pController a pCO2Sensor...\n");
                         sendMessage(&(queue[CO2_SENSOR_Q]), OutMsg);
                         next_state = WaitingCO2;
                         break;
@@ -232,6 +238,7 @@ static void *pController (void *arg) {
                         OutMsg.value2 = sensorsArray[1];
                         OutMsg.value3 = sensorsArray[2];
                         OutMsg.value4 = sensorsArray[3];
+                        printf("Enviando mensaje sSendData desde pController a pConsole con los valores %.1f, %.1f, %.1f y %.1f...\n", OutMsg.value, OutMsg.value2, OutMsg.value3, OutMsg.value4);
                         sendMessage(&(queue[CONSOLE_Q]), OutMsg);
                         next_state = IdleController;
                         break;
@@ -268,6 +275,7 @@ static void *pThermometer (void *arg) {
                     case sGetTemp:
                         OutMsg.signal = (int) sSendTemp;
                         OutMsg.value = Temp;
+                        printf("Enviando mensaje sSendTemp desde pThermometer a pController con el valor %.1f...\n", Temp);
                         sendMessage(&(queue[CONTROLLER_Q]), OutMsg);
                         next_state = IdleTemp;
                         break;
@@ -303,6 +311,7 @@ static void *pHumiditySensor (void *arg) {
                     case sGetHumidity:
                         OutMsg.signal = (int) sSendHumidity;
                         OutMsg.value = Hum;
+                        printf("Enviando mensaje sSendHumidity desde pHumiditySensor a pController con el valor %.1f...\n", Hum);
                         sendMessage(&(queue[CONTROLLER_Q]), OutMsg);
                         next_state = IdleHum;
                         break;
@@ -338,6 +347,7 @@ static void *pPhSensor (void *arg) {
                     case sGetPh:
                         OutMsg.signal = (int) sSendPh;
                         OutMsg.value = pH;
+                        printf("Enviando mensaje sSendPh desde pPhSensor a pController con el valor %.1f...\n", pH);
                         sendMessage(&(queue[CONTROLLER_Q]), OutMsg);
                         next_state = IdlePh;
                         break;
@@ -373,6 +383,7 @@ static void *pCO2Sensor (void *arg) {
                     case sGetCO2:
                         OutMsg.signal = (int) sSendCO2;
                         OutMsg.value = CO2;
+                        printf("Enviando mensaje sSendCO2 desde pCO2Sensor a pController con el valor %.1f...\n", CO2);
                         sendMessage(&(queue[CONTROLLER_Q]), OutMsg);
                         next_state = IdleCO2;
                         break;
@@ -408,6 +419,7 @@ static void *pTimer (void *arg) {
                         sleep(InMsg.value);
                         OutMsg.signal = (int) sTimeExpired;
                         OutMsg.value = 0;
+                        printf("Enviando mensaje sTimeExpired desde pTimer a sí mismo con el valor 0...\n");
                         sendMessage(&(queue[TIMER_Q]), OutMsg);
                         next_state = CheckTimeout;
                         break;
@@ -421,6 +433,7 @@ static void *pTimer (void *arg) {
                     case sTimeExpired:
                         OutMsg.signal = (int) sTimeout;
                         OutMsg.value = 0;
+                        printf("Enviando mensaje sTimeout desde pTimer a pConsole con el valor 0...\n");
                         sendMessage(&(queue[CONSOLE_Q]), OutMsg);
                         next_state = IdleTimer;
                         break;

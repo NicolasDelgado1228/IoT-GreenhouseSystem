@@ -2,7 +2,7 @@
 
 ## How to run
 
-1. Compile the files:
+1. Compile the files
     ```
     make
     ```
