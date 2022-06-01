@@ -99,6 +99,8 @@ static void *pConsole (void *arg) {
     fgets(line, sizeof (line), stdin);
     sscanf(line, "%d", &scanFrecuency);
 
+    if (scanFrecuency < 1) scanFrecuency = 1;
+
     for ( ; ; ) {
 
         state = next_state;
@@ -143,7 +145,7 @@ static void *pConsole (void *arg) {
                             CO2 = InMsg.value4;
 
                             // Displays data to the user
-                            if (MODE == 0 || MODE == 2) printf("%d \t%.1f °C\t\t%.1f %%\t\t%.1f\t\t%.1f ppm\n", InMsg.sender, Temp, Hum, pH, CO2);
+                            if (MODE == 0 || MODE == 2) printf("P-%d \t%.1f °C\t\t%.1f %%\t\t%.1f\t\t%.1f ppm\n", InMsg.sender, Temp, Hum, pH, CO2);
 
                             if (i + 1 == N_PLANTS) {
                                 // Sends a signal to the timer to count the waiting time
